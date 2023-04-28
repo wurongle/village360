@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全景图</title>
+    <script src="./assets/vue.global.prod.js"></script>
+    <script src="./assets/pannellum.js"></script>
+    <link rel="stylesheet" href="./assets/pannellum.css" />
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .item {
+            border-radius: 8px;
+            border: 1px solid #e4e4e4;
+            margin: 20px;
+            box-shadow: 0 0 10px #00000024;
+        }
+
+        .item .cover {
+            width: 100%;
+            padding-top: 50%;
+            background-size: cover;
+        }
+
+        .item .info {
+            /* background: #fff; */
+            padding: 10px;
+        }
+
+        .item .title {
+            /* font-weight: 500; */
+            font-size: 17px;
+        }
+
+        .item .desc {
+            font-size: 14px;
+            color: #CCC;
+        }
+
+        .viewer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .btn_close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            background-color: #00000019;
+            z-index: 999;
+            font-size: 30px;
+            color: #fff
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div v-show="page == 0">
+            <div class="item" v-for="(item,index) in items" @click="clickHandler(index)">
+                <div class="cover" :style="{backgroundImage: `url(${item.img})`}">
+                    <!-- <img :src="item.img"/> -->
+                </div>
+                <div class="info">
+                    <div class="title">{{item.title}}</div>
+                    <div class="desc">{{item.desc}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="viewer" v-show="page == 1">
+            <div class="btn_close" @click="close">X</div>
+            <div class="panorama" id="panorama"></div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    page: 0,
+                    items: [{
+                        img: "./assets/img/img360_guangzhouta.jpg",
+                        title: "广州塔",
+                        desc: "2022年12月"
+                    }, {
+                        img: "./assets/img/img360_aotidong.jpg",
+                        title: "奥体东",
+                        desc: "2022年11月"
+                    }, {
+                        img: "./assets/img/img360_xinguang.jpg",
+                        title: "新光大桥",
+                        desc: "2022年12月"
+                    }]
+                }
+            },
+            methods: {
+                clickHandler(index) {
+                    this.page = 1
+                    const item = this.items[index]
+                    pannellum.viewer('panorama', {
+                        "type": "equirectangular",
+                        "panorama": item.img,
+                        "autoLoad": true,
+                        "autoRotate": -2,
+                        "title": `${item.title} - ${item.desc}`,
+                    });
+                },
+                close() {
+                    this.page = 0
+                }
+            }
+
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

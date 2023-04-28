@@ -6,9 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全景图</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css" />
     <script src="./assets/vue.global.prod.js"></script>
-    <script src="./assets/pannellum.js"></script>
-    <link rel="stylesheet" href="./assets/pannellum.css" />
+    <script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.js"></script>
 
     <style>
         * {
@@ -65,6 +66,12 @@
             font-size: 30px;
             color: #fff
         }
+
+        .panorama {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+        }
     </style>
 </head>
 
@@ -83,12 +90,14 @@
         </div>
         <div class="viewer" v-show="page == 1">
             <div class="btn_close" @click="close">X</div>
-            <div class="panorama" id="panorama"></div>
         </div>
     </div>
-
+    <div class="panorama" id="panorama"></div>
     <script>
         const { createApp } = Vue
+        const viewer = new PhotoSphereViewer.Viewer({
+            container: document.querySelector('#panorama')
+        })
 
         createApp({
             data() {
@@ -109,20 +118,17 @@
                     }]
                 }
             },
+
             methods: {
                 clickHandler(index) {
                     this.page = 1
                     const item = this.items[index]
-                    pannellum.viewer('panorama', {
-                        "type": "equirectangular",
-                        "panorama": item.img,
-                        "autoLoad": true,
-                        "autoRotate": -2,
-                        "title": `${item.title} - ${item.desc}`,
-                    });
+                    viewer.setPanorama(item.img).then((e) => console.log(e));
+                    document.querySelector('#panorama').style.display = 'block'
                 },
                 close() {
                     this.page = 0
+                    document.querySelector('#panorama').style.display = 'none'
                 }
             }
 
